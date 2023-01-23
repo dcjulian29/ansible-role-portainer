@@ -1,0 +1,34 @@
+---
+- name: Get Portainer endpoints
+  ansible.builtin.uri:
+    url: "{{ portainer_endpoint }}/endpoints"
+    method: GET
+    return_content: true
+    headers:
+      Authorization: Bearer {{ (auth_token.content | from_json).jwt }}
+  register: portainer_known_endpoints_raw
+
+- name: Save endpoints as facts
+  ansible.builtin.set_fact:
+    portainer_known_endpoints: "{{ portainer_known_endpoints_raw.json | map(attribute='Name') | list }}"
+
+- name: Define Endpoints
+  ansible.builtin.shell: |
+    curl --silent --show-error -o - {{ portainer_endpoint }}/endpoints \
+      -H "Authorization: Bearer {{ (auth_token.content | from_json).jwt }}" \
+      -F "Name={{ item.name }}" \
+      -F "URL={{ item.url }}" \
+      -F "EndpointType=1"
+  args:
+    warn: false
+  with_items:
+    - "{{ portainer_endpoints }}"
+  when: item.name not in portainer_known_endpoints
+  register: portainer_response
+
+- name: Verifying endpoints were added
+  ansible.builtin.fail:
+    msg: "Could not add endpoint: {{ item.item.name }}"
+  when: item.stdout is defined and (item.stdout | from_json).err is defined
+  with_items:
+    - "{{ portainer_response.results }}"

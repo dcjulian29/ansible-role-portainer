@@ -1,0 +1,8 @@
+{
+  "Name": "{{ portainer_registry_name }}",
+  "URL": "{{ portainer_registry_url }}:{{ portainer_registry_port }}",
+  "Authentication": {{ potainer_registry_auth | default('false')}},
+  "Type": {{ portainer_registry_type | default(3)}},
+  "Username": "{{ portainer_registry_username }}",
+  "Password": "{{ portainer_registry_password }}"
+}

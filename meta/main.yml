@@ -1,0 +1,31 @@
+---
+dependencies:
+  - role: dcjulian29.docker
+  - role: geerlingguy.pip
+galaxy_info:
+  author: Julian Easterling
+  description: Ansible role to install Portainer
+  galaxy_tags:
+    - portainer
+    - docker
+    - container
+    - devops
+  license: Apache
+  min_ansible_version: "2.13.7"
+  namespace: dcjulian29
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - jammy
+    - name: Fedora
+      versions:
+        - "36"
+        - "35"
+    - name: EL
+      versions:
+        - "9"
+        - "8"
+  role_name: portainer

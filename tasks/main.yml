@@ -1,0 +1,88 @@
+---
+- name: Ensure the Portainer directory exists
+  ansible.builtin.file:
+    path: "{{ portainer_data }}"
+    state: directory
+    owner: root
+    group: docker
+    mode: "0770"
+
+- name: Pull Portainer docker image.
+  community.docker.docker_image:
+    name: "{{ portainer_image }}"
+    source: pull
+    tag: "{{ portainer_version }}"
+  notify: Restart Portainer
+
+- name: Ensure Portainer container is created
+  community.docker.docker_container:
+    container_default_behavior: no_defaults
+    detach: true
+    image: "{{ portainer_image }}:{{ portainer_version }}"
+    interactive: false
+    labels: "{{ portainer_labels | default(omit) }}"
+    name: "{{ portainer_name }}"
+    privileged: true
+    ports:
+      - "{{ portainer_port_tunnel }}:8000"
+      - "{{ portainer_port }}:9000"
+      - "{{ portainer_port_ssl }}:9443"
+    restart_policy: always
+    state: started
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{ portainer_data }}:/data"
+  register: portainer_docker
+
+- name: Force all notified handlers to run at this point
+  ansible.builtin.meta: flush_handlers
+
+- name: Set api endpoint for configuration
+  ansible.builtin.set_fact:
+    portainer_endpoint: "http://{{ portainer_docker.container.NetworkSettings.IPAddress }}:9000/api"
+
+- name: Configure admin user password.
+  ansible.builtin.url:
+    url: "{{ portainer_endpoint }}/users/admin/init"
+    method: POST
+    return_content: true
+    body_format: json
+    body: '{ "Username":"{{ portainer_user }}", "Password":"{{ portainer_passwd }}"}'
+    status_code: 200, 409
+  when: portainer_user and portainer_passwd is defined
+
+- name: Generate authentication token
+  ansible.builtin.url:
+    url: "{{ portainer_endpoint }}/auth"
+    method: POST
+    return_content: true
+    body_format: json
+    body: '{"Username": "{{ portainer_user }}", "Password": "{{ portainer_passwd }}"}'
+  register: auth_token
+  when: portainer_user and portainer_passwd is defined
+
+- name: Include endpoint tasks
+  ansible.builtin.include_tasks: endpoints.yml
+  when: portainer_endpoints | length > 0
+
+- name: Configure Portainer settings.
+  ansible.builtin.url:
+    url: "{{ portainer_endpoint }}/settings"
+    method: PUT
+    return_content: true
+    headers:
+      Authorization: "{{ (auth_token.content | from_json).jwt }}"
+    body_format: json
+    body: "{{ lookup('template', 'settings.json.j2') }}"
+  when: portainer_settings_configure
+
+- name: Configure Registry settings
+  ansible.builtin.url:
+    url: "{{ portainer_endpoint }}/registries"
+    method: POST
+    return_content: true
+    headers:
+      Authorization: "{{ (auth_token.content | from_json).jwt }}"
+    body_format: json
+    body: "{{ lookup('template', 'registry.json.j2') }}"
+  when: portainer_registry_configure

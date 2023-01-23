@@ -1,0 +1,3 @@
+---
+- name: Restart Portainer
+  command: "docker restart {{ portainer_name }}"
