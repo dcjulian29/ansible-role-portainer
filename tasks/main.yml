@@ -42,7 +42,7 @@
     portainer_endpoint: "http://{{ portainer_docker.container.NetworkSettings.IPAddress }}:9000/api"
 
 - name: Configure admin user password.
-  ansible.builtin.url:
+  ansible.builtin.uri:
     url: "{{ portainer_endpoint }}/users/admin/init"
     method: POST
     return_content: true
