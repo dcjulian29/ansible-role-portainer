@@ -66,7 +66,7 @@
   when: portainer_endpoints | length > 0
 
 - name: Configure Portainer settings.
-  ansible.builtin.url:
+  ansible.builtin.uri:
     url: "{{ portainer_endpoint }}/settings"
     method: PUT
     return_content: true
@@ -77,7 +77,7 @@
   when: portainer_settings_configure
 
 - name: Configure Registry settings
-  ansible.builtin.url:
+  ansible.builtin.uri:
     url: "{{ portainer_endpoint }}/registries"
     method: POST
     return_content: true
