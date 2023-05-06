@@ -1,0 +1,33 @@
+---
+name: Ansible Lint
+on:
+  push:
+    paths:
+      - "*.yml"
+
+  pull_request:
+    paths:
+      - "*.yml"
+
+  workflow_dispatch:
+
+
+jobs:
+  lint:
+    if: startsWith(github.ref, 'refs/heads/main')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3
+
+      - run: |
+          python3 -m pip install pip
+          pip3 install ansible ansible-lint yamllint
+
+      - run: ansible-lint .
