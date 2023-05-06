@@ -28,4 +28,5 @@ ansible-galaxy install -r requirements.yml
 
 ## Dependencies
 
-None
+- Ansible Role: `dcjulian29.docker`
+- Ansible Role: `geerlingguy.pip`
