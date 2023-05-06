@@ -3,11 +3,11 @@ name: Ansible Lint
 on:
   push:
     paths:
-      - "*.yml"
+      - "**.yml"
 
   pull_request:
     paths:
-      - "*.yml"
+      - "**.yml"
 
   workflow_dispatch:
 
