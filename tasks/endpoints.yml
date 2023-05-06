@@ -24,6 +24,7 @@
   with_items:
     - "{{ portainer_endpoints }}"
   when: item.name not in portainer_known_endpoints
+  changed_when: false
   register: portainer_response
 
 - name: Verifying endpoints were added
