@@ -1,0 +1,12 @@
+{
+  "name": "ansible-role-portainer",
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    },
+    "ghcr.io/dcjulian29/devcontainer-features/ansible-development:1": {
+      "version": "latest"
+    }
+  }
+}
