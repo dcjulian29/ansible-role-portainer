@@ -10,22 +10,11 @@ galaxy_info:
     - docker
     - container
     - devops
-  license: Apache
-  min_ansible_version: "2.13.7"
+  license: Apache-2.0
+  min_ansible_version: "2.16.7"
   namespace: dcjulian29
   platforms:
     - name: Debian
       versions:
-        - bullseye
-    - name: Ubuntu
-      versions:
-        - jammy
-    - name: Fedora
-      versions:
-        - "36"
-        - "35"
-    - name: EL
-      versions:
-        - "9"
-        - "8"
+        - bookworm
   role_name: portainer
