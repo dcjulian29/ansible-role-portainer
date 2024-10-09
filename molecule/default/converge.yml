@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include dcjulian29.portainer"
-      include_role:
-        name: "dcjulian29.portainer"
