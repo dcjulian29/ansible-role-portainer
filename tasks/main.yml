@@ -9,6 +9,7 @@
 
 - name: Pull Portainer docker image.
   community.docker.docker_image:
+    force_source: true
     name: "{{ portainer_image }}"
     source: pull
     tag: "{{ portainer_version }}"

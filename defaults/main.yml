@@ -37,4 +37,4 @@ portainer_registry_user: ""
 portainer_settings_configure: false
 portainer_templates_url: https://raw.githubusercontent.com/portainer/templates/master/templates.json
 portainer_user: admin
-portainer_version: "2.18.2"
+portainer_version: "2.21.3"
